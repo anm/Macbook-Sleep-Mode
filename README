@@ -1,0 +1,5 @@
+Macs can sleep by maintaining the RAM, saving it to disk, or doing both.
+Both is the default. Disk saves battery, RAM only makes going to sleep much
+faster.
+
+This script is a convenince to set the mode.
