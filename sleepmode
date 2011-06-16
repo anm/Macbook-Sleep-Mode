@@ -1,14 +1,40 @@
 #!/bin/bash
 
-echo -n "Current mode: "
-echo `pmset -g | grep hibernatemode | awk '{print $2}'`
-
+# The values pmset understands for each mode, when not using secure virtual
+# memory
 sleep=0
 hibernate=1
 both=3
 
-#add this to normal mode for secure mode
+# add this to mode if using secure memory
 secure=4
+
+function print_current_mode {
+    current_mode=$1
+    case "$current_mode" in
+        $sleep | $((sleep+secure)))
+            echo sleep
+            ;;
+        $hibernate | $((hibernate+secure)))
+            echo hibernate
+            ;;
+        $both | $((both+secure)))
+            echo both
+            ;;
+        *)
+            echo Error: I do not understand the current sleep mode.
+            exit 1
+        esac
+}
+
+function get_current_mode {
+    current=`pmset -g | grep hibernatemode | awk '{print $2}'`
+    return $current
+}
+
+echo -n "Current mode: "
+get_current_mode
+print_current_mode $?
 
 function usage {
     echo "-s sleep, -h hibernate, -b both."
@@ -37,5 +63,9 @@ if (($? == 0)); then
     mode=$((mode+secure))
 fi
 
-echo Setting to $mode
+
 sudo pmset -a hibernatemode $mode
+
+echo -n "Now set to: "
+get_current_mode
+print_current_mode $?
