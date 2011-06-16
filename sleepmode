@@ -1,0 +1,41 @@
+#!/bin/bash
+
+echo -n "Current mode: "
+echo `pmset -g | grep hibernatemode | awk '{print $2}'`
+
+sleep=0
+hibernate=1
+both=3
+
+#add this to normal mode for secure mode
+secure=4
+
+function usage {
+    echo "-s sleep, -h hibernate, -b both."
+}
+
+arg=$1
+
+case "$arg" in
+'-s')
+        mode=$sleep
+        ;;
+'-h')
+        mode=$hibernate
+        ;;
+'-b')
+        mode=$both
+        ;;
+*)
+        usage
+        exit 1
+esac
+
+# If secure virtual memory
+sysctl vm.swapusage |grep encrypted 1>/dev/null
+if (($? == 0)); then
+    mode=$((mode+secure))
+fi
+
+echo Setting to $mode
+sudo pmset -a hibernatemode $mode
