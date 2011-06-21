@@ -20,29 +20,25 @@
 
 
 # The values pmset understands for each mode, when not using secure virtual
-# memory
+# memory. See man pmset from OS 10.6. Undocumented in 10.4.
 sleep=0
-hibernate=1
+hibernate=25
 both=3
-
-# add this to mode if using secure memory
-secure=4
 
 function print_current_mode {
     current_mode=$1
     case "$current_mode" in
-        $sleep | $((sleep+secure)))
+        $sleep)
             echo sleep
             ;;
-        $hibernate | $((hibernate+secure)))
+        $hibernate)
             echo hibernate
             ;;
-        $both | $((both+secure)))
+        $both)
             echo both
             ;;
         *)
             echo Error: I do not understand the current sleep mode.
-            exit 1
         esac
 }
 
@@ -75,12 +71,6 @@ case "$arg" in
         usage
         exit 1
 esac
-
-# If secure virtual memory
-sysctl vm.swapusage |grep encrypted 1>/dev/null
-if (($? == 0)); then
-    mode=$((mode+secure))
-fi
 
 sudo pmset -a hibernatemode $mode
 

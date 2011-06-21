@@ -3,3 +3,7 @@ Both is the default. Disk saves battery, RAM only makes going to sleep much
 faster.
 
 This script is a convenince to set the mode.
+
+Tested on
+- Macbook Pro Early 2011, OS 10.6
+- Macbook, OS 10.4
